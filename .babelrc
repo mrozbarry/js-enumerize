@@ -1,0 +1,9 @@
+{
+  "env": {
+    "test": {
+      "presets": [
+        "@ava/babel-preset-stage-4"
+      ],
+    }
+  }
+}

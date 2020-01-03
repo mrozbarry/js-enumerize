@@ -1,7 +1,7 @@
 const { enumerize, Enumeration } = require('.');
 const test = require('ava');
 
-test('enumerize throws when given non-arrays', ava => {
+test('enumerize throws when given non-arrays', t => {
   const nonArray = [
     'test',
     123,
@@ -12,14 +12,14 @@ test('enumerize throws when given non-arrays', ava => {
     null,
   ];
 
-  ava.plan(nonArray.length);
+  t.plan(nonArray.length);
 
   nonArray.forEach((v) => {
-    ava.throws(() => enumerize(v), Error, `Was able to set ${JSON.stringify(v)}`);
+    t.throws(() => enumerize(v), Error, `Was able to set ${JSON.stringify(v)}`);
   });
 });
 
-test('enumerize throws when given an array of empty/non-strings', ava => {
+test('enumerize throws when given an array of empty/non-strings', t => {
   const arraysOfNonStrings = [
     [1, 2],
     [{}, {}],
@@ -29,49 +29,49 @@ test('enumerize throws when given an array of empty/non-strings', ava => {
     [''],
   ];
 
-  ava.plan(arraysOfNonStrings.length);
+  t.plan(arraysOfNonStrings.length);
 
   arraysOfNonStrings.forEach((v) => {
-    ava.throws(() => enumerize(v), Error, `Was able to set ${JSON.stringify(v)}`);
+    t.throws(() => enumerize(v), Error, `Was able to set ${JSON.stringify(v)}`);
   });
 });
 
-test('an enumerized object cannot be modified', ava => {
+test('an enumerized object cannot be modified', t => {
   const e = enumerize(['a', 'b']);
 
-  ava.plan(2);
-  ava.throws(() => e.a = 'test', Error, 'Cannot override old value');
-  ava.throws(() => e.c = 'test', Error, 'Cannot add new key/value');
+  t.plan(2);
+  t.throws(() => e.a = 'test', Error, 'Cannot override old value');
+  t.throws(() => e.c = 'test', Error, 'Cannot add new key/value');
 });
 
-test('enumerize succeeds when given an empty array', ava => {
+test('enumerize succeeds when given an empty array', t => {
   const e = enumerize([]);
-  ava.pass();
+  t.truthy(e);
 });
 
-test('enumerize succeeds when given an array of strings', ava => {
+test('enumerize succeeds when given an array of strings', t => {
   const e = enumerize(['bar', 'foo']);
-  ava.deepEqual(Object.keys(e).sort(), ['bar', 'foo']);
+  t.deepEqual(Object.keys(e).sort(), ['bar', 'foo']);
 });
 
-test('enumerize sets all values as symbols', ava => {
+test('enumerize sets all values as symbols', t => {
   const e = enumerize(['bar', 'foo']);
 
-  ava.plan(2);
-  Object.values(e).forEach(s => ava.truthy(typeof s === 'symbol'));
+  t.plan(2);
+  Object.values(e).forEach(s => t.truthy(typeof s === 'symbol'));
 });
 
-test('enumerize .toString() returns Enumeration { ...keys }', ava => {
+test('enumerize .toString() returns Enumeration { ...keys }', t => {
   const e = enumerize(['bar', 'foo']);
-  ava.is(e.toString(), 'Enumeration { bar, foo }');
+  t.is(e.toString(), 'Enumeration { bar, foo }');
 });
 
-test('enumeration .valueOf() returns [Symbol(key1), ...]', ava => {
+test('enumeration .valueOf() returns [Symbol(key1), ...]', t => {
   const e = enumerize(['bar', 'foo']);
-  ava.deepEqual(e.valueOf(), [e.bar, e.foo]);
+  t.deepEqual(e.valueOf(), [e.bar, e.foo]);
 });
 
-test('enumerize() returns an instance of Enumeration', ava => {
+test('enumerize() returns an instance of Enumeration', t => {
   const e = enumerize(['bar', 'foo']);
-  ava.truthy(e instanceof Enumeration);
+  t.truthy(e instanceof Enumeration);
 })

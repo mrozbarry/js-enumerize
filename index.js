@@ -1,10 +1,10 @@
-const enumProxy = function (values) {
+const frozenEnum = function (values) {
   return {
-    get: function (self, prop) {
+    get: (self, prop) => {
       if (prop in self) return Reflect.get(self, prop);
       throw new Error(`${prop} is not enum. Valid options are ${values.join(', ')}.`);
     },
-    set: function (self, prop) {
+    set: (_self, prop) => {
       throw new Error(`Cannot set ${prop} in enum.`);
     },
   };
@@ -34,7 +34,7 @@ const enumerize = function (values) {
 
   return new Proxy(
     target,
-    enumProxy(values),
+    frozenEnum(values),
   );
 };
 

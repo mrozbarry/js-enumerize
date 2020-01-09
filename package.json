@@ -5,21 +5,22 @@
   "license": "MIT",
   "devDependencies": {
     "ava": "^2.4.0",
-    "esm": "^3.2.25"
+    "esm": "^3.2.25",
+    "nyc": "^15.0.0"
   },
   "scripts": {
-    "test": "ava"
+    "test": "ava",
+    "test:cov": "nyc yarn test"
   },
   "ava": {
     "color": true,
     "files": [
-      "./**/*.spec.js"
+      "./**/*.test.js"
+    ],
+    "sources": [
+      "./**/*.js"
     ],
     "failFast": true,
-    "compileEnhancements": true,
-    "require": [
-      "esm"
-    ],
-    "verbose": true
+    "compileEnhancements": true
   }
 }

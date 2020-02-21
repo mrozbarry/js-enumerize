@@ -1,5 +1,5 @@
 {
-  "name": "js-enumerize",
+  "name": "@mrbarrysoftware/js-enumerize",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",

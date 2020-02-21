@@ -22,5 +22,6 @@
     ],
     "failFast": true,
     "compileEnhancements": true
-  }
+  },
+  "private": false
 }

@@ -1,10 +1,13 @@
-const { Any } = require('./any');
-const { toType, typeCheck } = require('./types');
-const test = require('ava');
+/* eslint-disable max-classes-per-file */
 
-test('toType casts to the specified type', t => {
+import test from 'ava';
+
+import { Any } from './any';
+import { toType, typeCheck } from './types';
+
+test('toType casts to the specified type', (t) => {
   t.deepEqual(toType('foo', Array), ['f', 'o', 'o']);
-  t.truthy(isNaN(toType('foo', Number)));
+  t.truthy(isNaN(toType('foo', Number))); // eslint-disable-line no-restricted-globals
   t.deepEqual(
     toType('2020-01-01T00:00:00.000Z', Date),
     new Date('2020-01-01T00:00:00.000Z'),

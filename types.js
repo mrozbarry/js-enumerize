@@ -1,11 +1,11 @@
-const { Any }  = require('./any');
+import { Any } from './any';
 
 // Cast
-const toType = (value, typeFn) => {
-  if (typeFn === Array) {
+const toType = (value, TypeFn) => {
+  if (TypeFn === Array) {
     return [...value];
   }
-  return new typeFn(value);
+  return new TypeFn(value);
 };
 
 // Type check
@@ -24,7 +24,7 @@ const typeCheck = (p, typeFn) => {
     || (p instanceof typeFn);
 };
 
-module.exports = {
+export {
   toType,
   typeCheck,
 };

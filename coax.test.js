@@ -1,6 +1,6 @@
-const { coax, isCoaxable, Coaxable } = require('./coax');
+import test from 'ava';
 
-const test = require('ava');
+import { coax } from './coax';
 
 class DateString {
   constructor(iso8601) {
@@ -14,11 +14,11 @@ class DateString {
 
 const CoaxedDateString = coax(DateString, (input) => (new Date(input)).toISOString());
 
-test('coax returns a new constructor function', t => {
+test('coax returns a new constructor function', (t) => {
   t.not(DateString, CoaxedDateString);
 });
 
-test('a coaxed class will create the correct type', t => {
+test('a coaxed class will create the correct type', (t) => {
   const d = CoaxedDateString('2020-01-01 12:00:00');
   t.truthy(d instanceof DateString);
 });

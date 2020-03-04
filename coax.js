@@ -1,7 +1,5 @@
-const coax = (Type, transformFn) => {
-  return (...args) => new Type(transformFn(...args))
-};
+const coax = (Type, transformFn) => (...args) => new Type(transformFn(...args));
 
-module.exports = {
+export {
   coax,
 };

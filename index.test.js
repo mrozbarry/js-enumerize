@@ -1,9 +1,8 @@
-const enumerize = require('.');
-const { Enumeration } = enumerize;
+import test from 'ava';
 
-const test = require('ava');
+import enumerize, { Enumeration } from '.';
 
-test('enumerize wraps Enumeration constructo', t => {
+test('enumerize wraps Enumeration constructor', (t) => {
   const declaration = {
     foo: [],
     bar: [],

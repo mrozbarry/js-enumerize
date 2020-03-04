@@ -1,11 +1,11 @@
-const { builder } = require('./builder');
+import { builder } from './builder';
 
 const rawKey = Symbol('raw');
 
 class Enumeration {
   constructor(declaration = {}) {
     this[rawKey] = { ...declaration };
-    let b = builder(this);
+    const b = builder(this);
     Object.keys(declaration)
       .forEach((key) => {
         b.add(key, declaration[key]);
@@ -14,9 +14,9 @@ class Enumeration {
 
   toString() {
     const data = Object.keys(this[rawKey])
-      .map(key => {
+      .map((key) => {
         const types = this[rawKey][key];
-        return `${key}<${types.map(p => p.name).join(', ')}>`
+        return `${key}<${types.map((p) => p.name).join(', ')}>`;
       })
       .join(', ');
 
@@ -32,7 +32,7 @@ class Enumeration {
     const enumKeys = Object.keys(this[rawKey]);
     if (optionKeys.length !== enumKeys.length && !options._) {
       throw new SyntaxError(
-        `Enumeration caseOf must either match against all keys (${enumKeys.join(', ')}), or add a \`_: () => {}\` as a default fall-through.`
+        `Enumeration caseOf must either match against all keys (${enumKeys.join(', ')}), or add a \`_: () => {}\` as a default fall-through.`,
       );
     }
     return options[key]
@@ -41,6 +41,6 @@ class Enumeration {
   }
 }
 
-module.exports = {
+export {
   Enumeration,
 };

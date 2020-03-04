@@ -1,12 +1,17 @@
-const { Enumeration } = require('./enumeration');
-const { Any } = require('./any');
-const { coax } = require('./coax');
+import { Enumeration } from './enumeration';
+import { Any } from './any';
+import { coax } from './coax';
 
 // Main method
 const enumerize = (values) => new Enumeration(values);
 
-module.exports = enumerize;
-module.exports.Any = Any;
-module.exports.Enumeration = Enumeration;
-module.exports.coax = coax;
-module.exports.default = enumerize;
+enumerize.Any = Any;
+enumerize.Enumeration = Enumeration;
+enumerize.coax = coax;
+
+export default enumerize;
+export {
+  Any,
+  Enumeration,
+  coax,
+};

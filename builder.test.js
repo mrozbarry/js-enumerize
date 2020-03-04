@@ -1,9 +1,9 @@
-const { builder, makeMethod } = require('./builder');
-const { Enumeration } = require('./enumeration');
+import test from 'ava';
 
-const test = require('ava');
+import { builder, makeMethod } from './builder';
+import { Enumeration } from './enumeration';
 
-test('makeMethod ensures all types are functions', t => {
+test('makeMethod ensures all types are functions', (t) => {
   t.throws(
     () => makeMethod('foo', ['not a function']),
     Error,
@@ -11,7 +11,7 @@ test('makeMethod ensures all types are functions', t => {
   );
 });
 
-test('makeMethod generates a method that guarantees the parameter length', t => {
+test('makeMethod generates a method that guarantees the parameter length', (t) => {
   const withType = makeMethod('foo', [String]);
   const withoutType = makeMethod('foo', []);
 
@@ -28,7 +28,7 @@ test('makeMethod generates a method that guarantees the parameter length', t => 
   );
 });
 
-test('makeMethod generates a method that throws if types do not match', t => {
+test('makeMethod generates a method that throws if types do not match', (t) => {
   const method = makeMethod('foo', [Date]);
   t.throws(
     () => method({ bad: true }),
@@ -36,14 +36,14 @@ test('makeMethod generates a method that throws if types do not match', t => {
   );
 });
 
-test('builder returns an object with an add function', t => {
+test('builder returns an object with an add function', (t) => {
   const b = builder();
 
   t.deepEqual(Object.keys(b), ['add']);
   t.is(typeof b.add, 'function');
 });
 
-test('builder.adds type functions to the enumeration argument (mutation)', t => {
+test('builder.adds type functions to the enumeration argument (mutation)', (t) => {
   const e = new Enumeration({});
   const b = builder(e);
 
@@ -54,7 +54,7 @@ test('builder.adds type functions to the enumeration argument (mutation)', t => 
   t.is(typeof e.foo, 'function');
 });
 
-test('builder.add does not allow keys with reserved words', t => {
+test('builder.add does not allow keys with reserved words', (t) => {
   const e = new Enumeration({});
   const b = builder(e);
 

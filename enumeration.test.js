@@ -1,12 +1,12 @@
-const { Enumeration } = require('./enumeration');
+import test from 'ava';
 
-const test = require('ava');
+import { Enumeration } from './enumeration';
 
-test('.constructor has a default empty object argument', t => {
+test('.constructor has a default empty object argument', (t) => {
   t.notThrows(() => new Enumeration());
 });
 
-test('.constructor creates empty typed items', t => {
+test('.constructor creates empty typed items', (t) => {
   const Enum = new Enumeration({
     foo: [],
     bar: [],
@@ -18,7 +18,7 @@ test('.constructor creates empty typed items', t => {
   t.is(Enum.toString(), 'Enumeration { foo<>, bar<> }');
 });
 
-test('.constructor can declare type dependencies', t => {
+test('.constructor can declare type dependencies', (t) => {
   const Enum = new Enumeration({
     foo: [Date],
   });
@@ -27,7 +27,7 @@ test('.constructor can declare type dependencies', t => {
   t.notThrows(() => Enum.foo(new Date()));
 });
 
-test('#valueOf stores a copy of the original declaration', t => {
+test('#valueOf stores a copy of the original declaration', (t) => {
   const declaration = {
     test: [String, Boolean],
   };
@@ -36,7 +36,7 @@ test('#valueOf stores a copy of the original declaration', t => {
   t.deepEqual(Enum.valueOf(), declaration);
 });
 
-test('#caseOf matches against the correct key', t => {
+test('#caseOf matches against the correct key', (t) => {
   t.plan(1);
 
   const Enum = new Enumeration({
@@ -50,7 +50,7 @@ test('#caseOf matches against the correct key', t => {
   }, Enum.foo('test'));
 });
 
-test('#caseOf matches against the fallback key with no params passed', t => {
+test('#caseOf matches against the fallback key with no params passed', (t) => {
   t.plan(1);
 
   const Enum = new Enumeration({
@@ -60,11 +60,11 @@ test('#caseOf matches against the fallback key with no params passed', t => {
 
   Enum.caseOf({
     foo: () => t.fail(),
-    _: (param) => t.is(param, (void 0)),
+    _: (param) => t.is(param, undefined),
   }, Enum.bar(123));
 });
 
-test('#caseOf throws if there are missing cases of the enumeration', t => {
+test('#caseOf throws if there are missing cases of the enumeration', (t) => {
   const Enum = new Enumeration({
     foo: [String],
     bar: [Number],
@@ -77,7 +77,7 @@ test('#caseOf throws if there are missing cases of the enumeration', t => {
   );
 });
 
-test('#toString provides a serialized string of the enumeration', t => {
+test('#toString provides a serialized string of the enumeration', (t) => {
   const Enum = new Enumeration({
     foo: [String],
     bar: [Number],

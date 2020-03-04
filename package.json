@@ -1,7 +1,8 @@
 {
   "name": "@mrbarrysoftware/js-enumerize",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index.es5.js",
+  "module": "index.js",
   "license": "MIT",
   "devDependencies": {
     "ava": "^2.4.0",

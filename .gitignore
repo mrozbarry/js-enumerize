@@ -1,4 +1,4 @@
-yarn.lock
 *.log
 node_modules
 .nyc_output
+index.es5.js

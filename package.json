@@ -5,12 +5,21 @@
   "license": "MIT",
   "devDependencies": {
     "ava": "^2.4.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.20.1",
     "esm": "^3.2.25",
-    "nyc": "^15.0.0"
+    "nyc": "^15.0.0",
+    "rollup": "^1.32.0",
+    "rollup-plugin-babel-minify": "^9.1.1",
+    "rollup-plugin-eslint": "^7.0.0"
   },
   "scripts": {
     "test": "ava",
-    "test:cov": "nyc yarn test"
+    "test:cov": "nyc yarn test",
+    "lint": "eslint .",
+    "build": "rollup -c",
+    "prepublishOnly": "yarn build"
   },
   "ava": {
     "color": true,
@@ -19,6 +28,9 @@
     ],
     "sources": [
       "./**/*.js"
+    ],
+    "require": [
+      "esm"
     ],
     "failFast": true,
     "compileEnhancements": true

@@ -1,6 +1,6 @@
 {
   "name": "@mrbarrysoftware/js-enumerize",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "index.es5.js",
   "module": "index.js",
   "license": "MIT",

@@ -13,10 +13,12 @@ If you are already using it, TypeScript offers compile-time typing which will be
 Install from npm or yarn:
 
 <pre>
-npm i <a href="https://github.com/mrozbarry/js-enumerizer">js-enumerize</a>
+npm i --save <a href="https://github.com/mrozbarry/js-enumerizer">@mrbarrysoftware/js-enumerize</a>
 </pre>
 
 ## What sort of enumeration is this?
+
+This is some sort of union enumeration type, made popular from languages like Elm and Haskell.
 
 First and foremost, this is just a type that has an affinity to a set of constants.
 For instance, you could write a simple boolean enumeration like this: `const bool = enumerize({ true: [], false: [] })`
@@ -25,7 +27,7 @@ In this case, we have `bool.true()` and `bool.false()`.
 
 Second, each enumeration supports pattern matching. This makes it easy to handle the various ways the enum can be used in one handy function.
 For instance, using the above bool type, let's say we want to print something on the screen based on whether or not the bool value is true:
-`bool.caseOf({ true: () => 'The value is true', false: () => 'The value is false' }, bool.true());`
+`const returnedString = bool.caseOf({ true: () => 'The value is true', false: () => 'The value is false' }, bool.true());`
 
 ## Usage
 
@@ -34,6 +36,14 @@ For instance, using the above bool type, let's say we want to print something on
 ```js
 // es6/babel
 import enumerize, { Any, coax } from 'js-enumerize';
+
+// from unpkg
+import enumerize, { Any, coax } from 'https://unpkg.com/@mrbarrysoftware/js-enumerize?module=1';
+
+// from script tag
+// <script src="https://unpkg.com/@mrbarrysoftware/js-enumerize"></script>
+const { enumerize } = window;
+const { Any, coax } = enumerize;
 
 // node
 const enumerize = require('js-enumerize');

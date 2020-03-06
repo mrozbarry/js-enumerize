@@ -10,6 +10,11 @@ const Maybe = enumerize({
 test('creates an enumeration with methods', (t) => {
   t.is(Maybe.just('foo') instanceof Maybe, true);
   t.is(Maybe.nothing() instanceof Maybe, true);
+  t.is(Maybe.name, 'Maybe');
+});
+
+test('Enumerize.toString outputs a string representation of the enumeration', (t) => {
+  t.is(Maybe.toString(), 'Maybe<just|nothing>');
 });
 
 test('enum instances do not cross boundaries', (t) => {
@@ -29,15 +34,15 @@ test('cannot set an unexpected type', (t) => {
 
   t.throws(
     () => ExplicitTypes.string(false),
-    'ExplicitTypes<string> expects argument#0 to be a String, but it was a boolean',
+    'ExplicitTypes<string>(String) expects argument#0 to be a String, but it was a boolean',
   );
   t.throws(
     () => ExplicitTypes.number('foo'),
-    'ExplicitTypes<number> expects argument#0 to be a Number, but it was a string',
+    'ExplicitTypes<number>(Number) expects argument#0 to be a Number, but it was a string',
   );
   t.throws(
     () => ExplicitTypes.bool(100),
-    'ExplicitTypes<bool> expects argument#0 to be a Boolean, but it was a number',
+    'ExplicitTypes<bool>(Boolean) expects argument#0 to be a Boolean, but it was a number',
   );
 });
 
@@ -49,7 +54,7 @@ test('can nest enumerized types', (t) => {
   t.notThrows(() => WithMaybe.foo(Maybe.just('test'), 'foo'));
   t.throws(
     () => WithMaybe.foo(123, 'foo'),
-    `WithMaybe<foo> expects argument#0 to be a ${Maybe.name}, but it was a number`,
+    `WithMaybe<foo>(Maybe, String) expects argument#0 to be a ${Maybe.name}, but it was a number`,
   );
 });
 

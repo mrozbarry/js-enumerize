@@ -1,3 +1,5 @@
-yarn.lock
 *.log
 node_modules
+.nyc_output
+coverage
+index.js

@@ -1,0 +1,6 @@
+src/*.test.js
+.babelrc
+.eslintrc
+.nvmrc
+nyc.config.js
+rollup.config.js

@@ -1,10 +1,18 @@
 {
   "name": "@mrbarrysoftware/js-enumerize",
   "version": "1.0.1",
-  "main": "index.es5.js",
-  "module": "index.js",
+  "main": "index.js",
+  "module": "src/index.js",
   "license": "MIT",
+  "scripts": {
+    "test": "ava",
+    "test:cov": "nyc --require=esm ava",
+    "lint": "eslint .",
+    "build": "rollup -c",
+    "prepublishOnly": "yarn build"
+  },
   "devDependencies": {
+    "@rollup/plugin-strip": "^1.3.2",
     "ava": "^2.4.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
@@ -13,28 +21,25 @@
     "nyc": "^15.0.0",
     "rollup": "^1.32.0",
     "rollup-plugin-babel-minify": "^9.1.1",
+    "rollup-plugin-cleanup": "^3.1.1",
     "rollup-plugin-eslint": "^7.0.0"
-  },
-  "scripts": {
-    "test": "ava",
-    "test:cov": "nyc yarn test",
-    "lint": "eslint .",
-    "build": "rollup -c",
-    "prepublishOnly": "yarn build"
   },
   "ava": {
     "color": true,
     "files": [
-      "./**/*.test.js"
+      "./src/*.test.js"
     ],
     "sources": [
-      "./**/*.js"
+      "./src/*.js"
     ],
     "require": [
       "esm"
     ],
     "failFast": true,
     "compileEnhancements": true
+  },
+  "esm": {
+    "cjs": true
   },
   "private": false
 }

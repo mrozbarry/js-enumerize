@@ -5,8 +5,12 @@
  - **Correct** - Enum values shouldn't exist outside of your enum.
  - **Modern** - Uses latest javascript language features for a seamless experience.
 
-An important note: all of the type checking is implemented at runtime, and that can be a problem.
-If you are already using it, TypeScript offers compile-time typing which will be much more efficient for your code.
+## Table of Contents
+
+ - [Getting Started](#getting-started)
+ - [Usage](#usage)
+ - [API](#api)
+ - [Other Important Stuff](#other-important-stuff)
 
 ## Getting Started
 
@@ -78,6 +82,7 @@ For a `Maybe`, we can either extract the `just` value, or handle the case when w
 > **Important:**
 > `YourEnumType.caseOf` of any enumeration **must** account for all cases.
 This means each type key you declare, like `just` and `nothing`, must exist as keys in your `.caseOf` call.
+If you want to skip cases, use the `_` fall-through.
 
 ### Real-life Use Case
 
@@ -119,37 +124,16 @@ const SomeComponent = ({ progress }) => Progress.caseOf({
 }, progress);
 ```
 
-### Skipping `.caseOf` keys
-
-There are a number of cases we may encounter where we don't need to examine all the cases when extracting data.
-
-```js
-const Base64Image = enumerize({
-  incomplete: [],
-  pending: [Number, Number],
-  complete: [String],
-});
-
-const DisplayImage = ({ image }) => Base64Image({
-  complete: src => <img src={src} />,
-  _: () => null,
-});
-```
-
-The `_`, in this case, is a default matcher.
-We don't care about how complete the image is, we just want to display it.
-If it's complete, we can use an image tag, and if it's incomplete, for any reason, don't show anything.
-
-> **Important:**
-> The `_` fallback matcher does not accept any parameters.
-This is because any of the unmatched types may have incompatible parameters - there wouldn't be any reasonable way to know which parameters are available.
-
 ## API
 
+### enumerize(definition[, name]) : [class Enumeration](#class-enumeration)
 ---
-### enumerize(definition[, name]) : Enumeration
 
-#### definition
+Create a new enumeration.
+
+#### Parameters
+
+##### definition (required)
 
 An object with the following shape descriptor:
 
@@ -160,30 +144,104 @@ An object with the following shape descriptor:
 }
 ```
 
-Each key is a union type in this enumeration. For instance, if we were to make a boolean, the two keys would likely be `true` and `false`.
-Each key must have an array of types that it takes as arguments. This array can be empty, contain built-in types, custom classes, or other `enumerized()` types.
+Each key is a union type in this enumeration.
+For instance, if we were to make a boolean, the two keys would likely be `true` and `false`.
+Each key must have an array of type constructors.
+This array can be empty, contain built-in types, custom classes, or other `enumerized()` types.
 
-#### name
+##### name (optional)
 
-A string name to assign the enumerization. This is handy for debugging, but it defaults to `'Enumeration'`.
+A string name to assign the enumerization.
+This is handy for debugging using the two `toString()` methods off [Enumeration](#class-enumeration).
+It defaults to `'Enumeration'`.
 
 #### Return value
 
-Returns an Enumeration class
+Returns a unique Enumeration class.
 
----
+#### Notes
+
+_None_
+
+#### Example
+
+```js
+const MyEnumUnion = enumerize({
+  foo: [String, Boolean],
+  bar: [Function],
+  baz: [],
+}, 'MyEnumUnion');
+```
+
 ### class Enumeration
+---
 
-#### static method Enumeration.toString() : String
+A class representing a enumerated union type.
+Each instance is a union value of this type.
+
+### Enumeration.toString() : String
 
 A string representation of an enumeration.
+
+#### Parameters
+
+_None_
+
+#### Return Value
+
 Will take the form of `Maybe<just|nothing>`.
 
-#### static method Enumeration.caseOf(objectOfUnionsAndUnderscore, valueFromEnumeration) : Any
+#### Notes
+
+_None_
+
+#### Example
+
+```js
+const MyEnumUnion = enumerize({
+  foo: [String, Boolean],
+  bar: [Function],
+  baz: [],
+}, 'MyEnumUnion');
+
+console.log(MyEnumUnion.toString()) // Output: MyEnumUnion<foo|bar|baz>
+```
+
+### Enumeration.caseOf(objectOfDefinitionKeys, enumerationValue) : Any
 
 A method that acts like a decode/switch statement of the various union types of an enumeration.
-It returns whatever value is returned from a case.
-Using the maybe type as an example, a caseOf could be built like:
+Given a value generated from your enumeration, it will call the supplied keyed function in `objectOfDefinitionKeys` and return that value.
+
+#### Parameters
+
+##### objectOfDefinitionKeys (required)
+
+An object taking a shape similar to the definition in a union.
+Instead of arrays with constructors as values, the values should be functions that accept the ordered parameters reflected in the definition.
+These functions can return a value that is piped to the return value of the `caseOf` function.
+All keys from the definition are required to be present, but it is possible to create a fall-through using the `_` key.
+
+##### valueFromEnumeration (required)
+
+A value generated from your enumeration.
+This will typically take the form of `YourEnumUnion.someType(...parameters)`.
+The types of your parameters **must** match the expected type constructors given to your `enumerize` call.
+
+#### Return Value
+
+The value returned from the appropriate keyed function.
+
+#### Notes
+
+This function will throw under the following conditions:
+
+ - If you have missing definition keys and do not supply a `_`.
+ - If you have definition keys that do not exist in the original `enumerize` definition.
+ - If you pass a value that is not of the same enumeration type.
+
+#### Example
+
+Using all definition keys:
 
 ```js
 const greet = maybeName => Maybe.caseOf({
@@ -195,9 +253,7 @@ console.log(greet(Maybe.just('Alex'))); // Hello Alex
 console.log(greet(Maybe.nothing()));    // Hey stranger
 ```
 
-`caseOf` **must** contain all union types of an enumeration, but this rule can be side-stepped by using the `_` key.
-The `_` is a default type fall-through, but it comes at a price where you cannot read the params encoded in it.
-Here's how the above example could work with a default fall-through:
+Using a `_` fall-through:
 
 ```js
 const greet = maybeName => Maybe.caseOf({
@@ -209,11 +265,23 @@ console.log(greet(Maybe.just('Alex'))); // Hello friend
 console.log(greet(Maybe.nothing()));    // Hey stranger
 ```
 
-#### dynamic static method <type>(...params) : Enumeration instance
+### Enumeration.{{type}}(...params) : Enumeration instance
 
-When you create an `enumerization` with union types, each type gets a function, where params must align with it's types.
+When you create an `enumerization` with union types, each type gets a function to create that union type.
+
+#### Parameters
+
+A dynamic list of parameters that must match the constructor types provided in your `enumerize` definition.
+
+#### Return value
+
+An instance of your enumeration.
+
+#### Notes
+
 If the params don't match their respective type, an error will be thrown.
-For instance:
+
+#### Example
 
 ```js
 const MyType = enumerize({
@@ -221,7 +289,71 @@ const MyType = enumerize({
   bar: [Boolean],
 }, 'MyType');
 
-console.log(MyType.foo('hello', 42)) // Outputs MyType<foo>(String, Number)
-console.log(MyType.bar(true)) // Outputs MyType<bar>(Boolean)
-console.log(MyType.foo({}, false)) // Throws a TypeError
+console.log(MyType.foo('hello', 42)); // Outputs: MyType.foo(hello, 42)
+console.log(MyType.bar(true));        // Outputs: MyType.bar(true)
+console.log(MyType.foo({}, false));   // Throws a TypeError
+
+const isInstanceOfMyType = MyType.foo('hello', 42) instanceof MyType;
+console.log(isInstanceOfMyType);      // Outputs: true
 ```
+
+### Enumeration#toString() : String
+
+Output the type and values of an Enumeration instance.
+
+#### Parameters
+
+_None_
+
+#### Return value
+
+Returns a string representation of your enumeration value.
+
+#### Notes
+
+_None_
+
+#### Example
+
+```js
+const MyType = enumerize({
+  foo: [String, Number],
+  bar: [Boolean],
+}, 'MyType');
+
+const value = MyType.foo('hello', 42);
+console.log(value.toString()); // Outputs: MyType.foo(hello, 42)
+```
+
+### Enumeration#toTypeString() : String
+
+Output the type and parameter types of an enumeration instance.
+
+#### Parameters
+
+_None_
+
+#### Return value
+
+A string representation of your enumeration type's parameter types.
+
+#### Notes
+
+_None_
+
+#### Examples
+
+```js
+const MyType = enumerize({
+  foo: [String, Number],
+  bar: [Boolean],
+}, 'MyType');
+
+const value = MyType.foo('hello', 42);
+console.log(value.toTypeString()); // Outputs: MyType.foo(<String>, <Number>)
+```
+
+## Other Important Stuff
+
+ - Check out the license [here](./LICENSE.md)
+ - And other cool stuff [here](https://mrbarry.com)

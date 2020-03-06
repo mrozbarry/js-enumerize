@@ -13,7 +13,7 @@ export default {
   ],
   output: {
     name: 'enumerize',
-    file: 'index.es5.js',
+    file: 'index.js',
     format: 'umd',
     exports: 'named',
   },

@@ -34,15 +34,15 @@ test('cannot set an unexpected type', (t) => {
 
   t.throws(
     () => ExplicitTypes.string(false),
-    'ExplicitTypes<string>(String) expects argument#0 to be a String, but it was a boolean',
+    'ExplicitTypes.string(<String>) expects argument#0 to be a String, but it was a boolean',
   );
   t.throws(
     () => ExplicitTypes.number('foo'),
-    'ExplicitTypes<number>(Number) expects argument#0 to be a Number, but it was a string',
+    'ExplicitTypes.number(<Number>) expects argument#0 to be a Number, but it was a string',
   );
   t.throws(
     () => ExplicitTypes.bool(100),
-    'ExplicitTypes<bool>(Boolean) expects argument#0 to be a Boolean, but it was a number',
+    'ExplicitTypes.bool(<Boolean>) expects argument#0 to be a Boolean, but it was a number',
   );
 });
 
@@ -54,7 +54,7 @@ test('can nest enumerized types', (t) => {
   t.notThrows(() => WithMaybe.foo(Maybe.just('test'), 'foo'));
   t.throws(
     () => WithMaybe.foo(123, 'foo'),
-    `WithMaybe<foo>(Maybe, String) expects argument#0 to be a ${Maybe.name}, but it was a number`,
+    `WithMaybe.foo(Maybe<just|nothing>, <String>) expects argument#0 to be a ${Maybe.name}, but it was a number`,
   );
 });
 

@@ -12,6 +12,8 @@ const validateType = (Type, value) => {
   return validator ? validator(value) : value instanceof Type;
 };
 
+const isEnumeration = Symbol('isEnumeration');
+
 const enumerize = (definition, name = 'Enumeration') => {
   const keys = Object.keys(definition);
 
@@ -36,16 +38,19 @@ const enumerize = (definition, name = 'Enumeration') => {
       const typesToValidate = definition[type];
 
       this.valueOf = () => [type, ...params];
-      this.toString = () => `${Enumeration.name}<${type}>(${typesToValidate.map((t) => t.name).join(', ')})`;
+      this.toString = () => `${Enumeration.name}.${type}(${params.map((p) => p).join(', ')})`;
+      const typeToString = (t) => (t[isEnumeration] ? t.toString() : `<${t.name}>`);
+      this.toTypeString = () => `${Enumeration.name}.${type}(${typesToValidate.map(typeToString).join(', ')})`;
 
       params.forEach((param, index) => {
         const expectedType = typesToValidate[index];
         if (validateType(expectedType, param)) return;
 
-        throw new Error(`${this.toString()} expects argument#${index} to be a ${expectedType.name}, but it was a ${typeof param}`);
+        throw new Error(`${this.toTypeString()} expects argument#${index} to be a ${expectedType.name}, but it was a ${typeof param}`);
       });
     }
   }
+  Enumeration[isEnumeration] = true;
 
   keys.forEach((type) => {
     Enumeration[type] = (...params) => new Enumeration(type, ...params);

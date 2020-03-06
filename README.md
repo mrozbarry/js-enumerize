@@ -35,19 +35,19 @@ For instance, using the above bool type, let's say we want to print something on
 
 ```js
 // es6/babel
-import enumerize, { Any, coax } from 'js-enumerize';
+import enumerize, { Any } from 'js-enumerize';
 
 // from unpkg
-import enumerize, { Any, coax } from 'https://unpkg.com/@mrbarrysoftware/js-enumerize?module=1';
+import enumerize, { Any } from 'https://unpkg.com/@mrbarrysoftware/js-enumerize?module=1';
 
 // from script tag
 // <script src="https://unpkg.com/@mrbarrysoftware/js-enumerize"></script>
 const { enumerize } = window;
-const { Any, coax } = enumerize;
+const { Any } = enumerize;
 
 // node
 const enumerize = require('js-enumerize');
-const { Any, coax } = enumerize;
+const { Any } = enumerize;
 ```
 
 ### Simple
@@ -143,3 +143,85 @@ If it's complete, we can use an image tag, and if it's incomplete, for any reaso
 > **Important:**
 > The `_` fallback matcher does not accept any parameters.
 This is because any of the unmatched types may have incompatible parameters - there wouldn't be any reasonable way to know which parameters are available.
+
+## API
+
+---
+### enumerize(definition[, name]) : Enumeration
+
+#### definition
+
+An object with the following shape descriptor:
+
+```js
+{
+  nameOfUnionType: [String, Number, ...otherTypes],
+  otherType: [Boolean, Object, Function],
+}
+```
+
+Each key is a union type in this enumeration. For instance, if we were to make a boolean, the two keys would likely be `true` and `false`.
+Each key must have an array of types that it takes as arguments. This array can be empty, contain built-in types, custom classes, or other `enumerized()` types.
+
+#### name
+
+A string name to assign the enumerization. This is handy for debugging, but it defaults to `'Enumeration'`.
+
+#### Return value
+
+Returns an Enumeration class
+
+---
+### class Enumeration
+
+#### static method Enumeration.toString() : String
+
+A string representation of an enumeration.
+Will take the form of `Maybe<just|nothing>`.
+
+#### static method Enumeration.caseOf(objectOfUnionsAndUnderscore, valueFromEnumeration) : Any
+
+A method that acts like a decode/switch statement of the various union types of an enumeration.
+It returns whatever value is returned from a case.
+Using the maybe type as an example, a caseOf could be built like:
+
+```js
+const greet = maybeName => Maybe.caseOf({
+  just: name => `Hello ${name}`,
+  nothing: () => 'Hey stranger',
+}, maybeName);
+
+console.log(greet(Maybe.just('Alex'))); // Hello Alex
+console.log(greet(Maybe.nothing()));    // Hey stranger
+```
+
+`caseOf` **must** contain all union types of an enumeration, but this rule can be side-stepped by using the `_` key.
+The `_` is a default type fall-through, but it comes at a price where you cannot read the params encoded in it.
+Here's how the above example could work with a default fall-through:
+
+```js
+const greet = maybeName => Maybe.caseOf({
+  nothing: () => 'Hey stranger',
+  _: () => `Hello friend`,
+}, maybeName);
+
+console.log(greet(Maybe.just('Alex'))); // Hello friend
+console.log(greet(Maybe.nothing()));    // Hey stranger
+```
+
+#### dynamic static method <type>(...params) : Enumeration instance
+
+When you create an `enumerization` with union types, each type gets a function, where params must align with it's types.
+If the params don't match their respective type, an error will be thrown.
+For instance:
+
+```js
+const MyType = enumerize({
+  foo: [String, Number],
+  bar: [Boolean],
+}, 'MyType');
+
+console.log(MyType.foo('hello', 42)) // Outputs MyType<foo>(String, Number)
+console.log(MyType.bar(true)) // Outputs MyType<bar>(Boolean)
+console.log(MyType.foo({}, false)) // Throws a TypeError
+```
